@@ -3,45 +3,23 @@ package com.example.super_bowl_winners
 import android.os.CountDownTimer
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.*
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import kotlin.random.Random
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,9 +46,6 @@ fun SecondPage(navController: NavController, sport: String) {
         )
     }
 
-    // LaunchEffect -> enter the composition; when you first enter the composition
-    // SideEffect -> each recomposition; every time
-    // DisposableEffect -> when you leave the composition
     LaunchedEffect(key1 = "Sport") {
         val resultList = generateQuestions(sport)
         myQuestion = resultList[0].toString()
@@ -85,84 +60,86 @@ fun SecondPage(navController: NavController, sport: String) {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             Icons.AutoMirrored.Rounded.ArrowBack,
-                            contentDescription = "Arrow Back"
+                            contentDescription = "Back",
+                            tint = Color.White
                         )
                     }
                 },
                 title = {
-                    Text(
-                        text = when (sport) {
-                            "nba" -> "NBA"
-                            else -> "NFL"
-                        },
-                        fontSize = 20.sp
-                    )
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = when (sport) {
+                                "nba" -> "NBA Trivia"
+                                else -> "NFL Trivia"
+                            },
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 },
                 colors = topAppBarColors(
                     containerColor = colorResource(id = R.color.purple_200),
-                    navigationIconContentColor = Color.White,
                     titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White
                 )
             )
         },
 
-        content = {
+                content = {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(it),
+                    .padding(it)
+                    .padding(horizontal = 16.dp, vertical = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Text("Score:  ", fontSize = 16.sp, color = Color.Black)
-                    Text(score.toString(), fontSize = 16.sp, color = Color.Black)
-                    Text("Remaining Time", fontSize = 16.sp, color = Color.Black)
-                    Text(remainingTime, fontSize = 16.sp, color = Color.Black)
+                    ScoreTimeDisplay(label = "Score", value = score.toString())
+                    ScoreTimeDisplay(label = "Time", value = remainingTime)
                 }
+
                 Spacer(modifier = Modifier.height(30.dp))
 
                 TextForQuestions(text = myQuestion)
                 Spacer(modifier = Modifier.height(15.dp))
 
-                answerArray.forEach {
-                    Button(
-                        onClick = {
-                            myAnswer = it
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(id = R.color.purple_200)
-                        ),
-                        shape = RoundedCornerShape(5.dp),
-                        border = BorderStroke(2.dp, color = colorResource(id = R.color.purple_200)),
-                        modifier = Modifier.size(300.dp, 75.dp)
-                    ) {
-                        Text(it, fontSize = 24.sp, color = Color.White)
-                    }
+                answerArray.forEach { answer ->
+                    AnswerButton(
+                        answerText = answer,
+                        onClick = { myAnswer = answer },
+                        isSelected = myAnswer == answer
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(50.dp))
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     ButtonOkNext(
                         buttonText = "OK",
                         myOnClick = {
-                            myQuestion = "Wrong!"
-                            nextEnabled = true
-
-                            if (myAnswer == correctAnswer) {
+                            myQuestion = if (myAnswer == correctAnswer) {
                                 score += 10
-                                myQuestion = "Correct"
-                                myAnswer = ""
+                                "Correct!"
+                            } else {
+                                "Wrong!"
                             }
+                            nextEnabled = true
                         },
                         isEnabled = myAnswer.isNotEmpty()
                     )
@@ -186,15 +163,47 @@ fun SecondPage(navController: NavController, sport: String) {
 }
 
 @Composable
+fun ScoreTimeDisplay(label: String, value: String) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(text = label, fontSize = 18.sp, color = Color.Black)
+        Text(text = value, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+    }
+}
+
+@Composable
+fun AnswerButton(answerText: String, onClick: () -> Unit, isSelected: Boolean) {
+    Button(
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (isSelected) colorResource(id = R.color.purple_200) else Color.LightGray
+        ),
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(2.dp, color = colorResource(id = R.color.purple_200)),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .height(60.dp)
+    ) {
+        Text(
+            text = answerText,
+            fontSize = 20.sp,
+            color = if (isSelected) Color.White else Color.Black
+        )
+    }
+}
+
+@Composable
 fun TextForQuestions(text: String) {
     Text(
-        text,
-        fontSize = 24.sp,
+        text = text,
+        fontSize = 22.sp,
+        fontWeight = FontWeight.SemiBold,
         color = Color.White,
         textAlign = TextAlign.Center,
         modifier = Modifier
-            .background(color = colorResource(id = R.color.purple_200))
-            .size(300.dp, 75.dp)
+            .background(color = colorResource(id = R.color.purple_200), shape = RoundedCornerShape(12.dp))
+            .padding(16.dp)
+            .fillMaxWidth()
             .wrapContentHeight()
     )
 }
@@ -205,14 +214,16 @@ fun ButtonOkNext(buttonText: String, myOnClick: () -> Unit, isEnabled: Boolean) 
         onClick = myOnClick,
         enabled = isEnabled,
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color.White
+            containerColor = colorResource(id = R.color.purple_200),
+            disabledContainerColor = Color.LightGray
         ),
-        shape = RoundedCornerShape(5.dp),
+        shape = RoundedCornerShape(12.dp),
         border = BorderStroke(2.dp, color = colorResource(id = R.color.purple_200)),
-        modifier = Modifier.width(150.dp)
-
+        modifier = Modifier
+            .width(150.dp)
+            .height(60.dp)
     ) {
-        Text(buttonText, fontSize = 24.sp, color = colorResource(id = R.color.purple_200))
+        Text(buttonText, fontSize = 20.sp, color = Color.White)
     }
 }
 

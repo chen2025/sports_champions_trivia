@@ -1,26 +1,16 @@
 package com.example.super_bowl_winners
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -31,27 +21,46 @@ fun ResultPage(navController: NavController, score: Int) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Results", fontSize = 20.sp) },
+                title = {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            "Results",
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = colorResource(id = R.color.teal_200),
-                    titleContentColor = Color.White,
+                    titleContentColor = Color.White
                 )
             )
         },
-        content = {
+
+                content = {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(it),
+                    .padding(it)
+                    .padding(horizontal = 16.dp, vertical = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
+                Spacer(modifier = Modifier.height(20.dp))
+
                 // Display the user's score
                 Text(
                     text = "Your Score: $score",
-                    fontSize = 32.sp,
+                    fontSize = 36.sp,
+                    fontWeight = FontWeight.SemiBold,
                     color = colorResource(id = R.color.purple_200)
                 )
+
+                Spacer(modifier = Modifier.height(30.dp))
 
                 // Replay button to navigate back to the first page
                 Button(
@@ -60,7 +69,14 @@ fun ResultPage(navController: NavController, score: Int) {
                         containerColor = colorResource(id = R.color.teal_200)
                     ),
                     shape = RoundedCornerShape(20.dp),
-                    modifier = Modifier.size(250.dp, 100.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .height(60.dp),
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 6.dp,
+                        pressedElevation = 12.dp
+                    )
                 ) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
@@ -68,10 +84,12 @@ fun ResultPage(navController: NavController, score: Int) {
                         tint = Color.White,
                         modifier = Modifier.size(24.dp)
                     )
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "Play Again",
                         color = Color.White,
-                        fontSize = 24.sp
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Medium
                     )
                 }
             }
