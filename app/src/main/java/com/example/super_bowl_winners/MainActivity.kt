@@ -16,6 +16,21 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.super_bowl_winners.ui.theme.Super_bowl_winnersTheme
 
+
+/*
+Authored by Tony Chen and Jack D'Angelo
+The app is an interactive trivia game focused on NBA and NFL champions. Users can select a sport and answer questions about which team won the championship in a given year.
+The app features:
+- Navigation: Allows users to move between different pages of the app.
+- Trivia Questions: Generates random questions about NBA and NFL champions.
+- User Interaction: Users can select answers, and the app keeps track of their score and time remaining.
+- UI Components: Displays questions, possible answers, score, and time using Jetpack Compose.
+
+The app provides an engaging way for users to test their knowledge of sports history.
+The FirstPage composable function serves as the main entry point where users can choose between NFL and NBA trivia.
+The ResultPage composable function displays the user's score and provides an option to replay the game.
+ */
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
